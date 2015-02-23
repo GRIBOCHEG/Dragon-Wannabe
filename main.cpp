@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-string trim (string str)
+string rmws (string str)
 {
 	int n = 0;
 	while (n < str.length())
@@ -13,7 +13,7 @@ string trim (string str)
 	return str;
 }
 
-int main()
+void menu_main ()
 {
 	string choice;
 	cout << "Main menu.\n" << "1. Start game\n" << "2. Exit\n";
@@ -21,7 +21,7 @@ int main()
 	while (i < 1)
 	{
 		getline(cin, choice);
-		choice = trim(choice);
+		choice = rmws(choice);
 		cout << "You entered: " << choice << endl;
 		if (choice == "1")
 		{
@@ -34,6 +34,11 @@ int main()
 		}
 		else cout << "Wrong.\n";
 	}
+}
+
+int main()
+{
+	menu_main();
 	cout << "The end\n";
 	return 0;
 }
