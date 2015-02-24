@@ -27,7 +27,7 @@ string purify_string (string str)
 		{
 			temp.push_back(str[n]);
 		}
-		else if (str[n] == ' ' && !temp.empty())
+		else if (!temp.empty())
 		{
 			result.push(temp);
 			temp = "";
