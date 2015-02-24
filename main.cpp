@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <queue>
 using namespace std;
 
 string rmws (string str)
@@ -13,6 +14,37 @@ string rmws (string str)
 		else n++;
 	}
 	return str;
+}
+
+string purify_string (string str)
+{
+	string temp = "";
+	queue <string> result;
+	int n = 0;
+	while (n < str.length())
+	{
+		if (str[n] != ' ')
+		{
+			temp.push_back(str[n]);
+		}
+		else if (str[n] == ' ' && !temp.empty())
+		{
+			result.push(temp);
+			temp = "";
+		}
+		n++;
+	}
+	temp = "";
+	while (!result.empty())
+	{
+		temp += result.front();
+		result.pop();
+		if (!result.empty()) 
+			{
+				temp += " ";
+			}
+	}
+	return temp;
 }
 
 struct Character
@@ -53,7 +85,9 @@ Character menu_character ()
 {
 	Character cr;
 	cout << "Let's settle up with your character.\n" << "Enter The name : \n";
-	cin >> cr.name;
+	getline(cin, cr.name);
+	cr.name = purify_string(cr.name);
+	cout << "Your name is: " << cr.name << endl;
 	cout << "Your age equals : \n";
 	cin >> cr.age;
 	cout << "How will people remember you? \n";
@@ -101,7 +135,11 @@ void menu_navigation (Character chr)
 		{
 			cout << "To room " << world.rooms[m].doors[n] << " ?[y/n]\n";
 			cin >> choice;
-			if (choice == "y") chr.inroom = world.rooms[m].doors[n] ;
+			if (choice == "y")
+			{
+				chr.inroom = world.rooms[m].doors[n] ;
+				break;
+			} 
 			n++;
 		}
 	}
