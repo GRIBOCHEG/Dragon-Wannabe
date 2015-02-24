@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <string>
 using namespace std;
 
 string rmws (string str)
@@ -18,9 +20,20 @@ struct Character
 	string name;
 	int age;
 	string bio;
+	int inroom = 0;
 };
 
-string gml (istream &i)
+struct Room
+{
+	vector<int> doors;
+};
+
+struct Level
+{
+	vector<Room> rooms;
+};
+
+string getmultiline (istream &i)
 {
 	string accumulator = "";
 	while (true)
@@ -44,11 +57,55 @@ Character menu_character ()
 	cout << "Your age equals : \n";
 	cin >> cr.age;
 	cout << "How will people remember you? \n";
-	cr.bio = gml(cin);
-	cout << cr.bio;
+	cr.bio = getmultiline(cin);
 	return cr;
 }
 
+Level creator_level ()
+{
+	Level level1;
+	Room room0, room1, room2, room3, room4;
+	level1.rooms.push_back(room0);
+	level1.rooms.push_back(room1);
+	level1.rooms.push_back(room2);
+	level1.rooms.push_back(room3);
+	level1.rooms.push_back(room4);
+	level1.rooms[0].doors.push_back(1);
+	level1.rooms[1].doors.push_back(0);
+	level1.rooms[1].doors.push_back(2);
+	level1.rooms[1].doors.push_back(4);
+	level1.rooms[2].doors.push_back(1);
+	level1.rooms[2].doors.push_back(3);
+	level1.rooms[3].doors.push_back(2);
+	level1.rooms[3].doors.push_back(4);
+	level1.rooms[4].doors.push_back(1);
+	level1.rooms[4].doors.push_back(3);
+	level1.rooms[4].doors.push_back(0); 
+	return level1;
+}
+
+void menu_navigation (Character chr)
+{
+	int n = 0, m = 0;
+	string choice;
+	Level world = creator_level();
+	while (true)
+	{
+		n = 0;
+		m = chr.inroom;
+		cout << "You're in room " << chr.inroom << endl;
+		cout << "In this world present " << world.rooms.size() << " rooms\n";
+		cout << "In this room present " << world.rooms[m].doors.size() << " doors\n";
+		cout << "Where'd ya want to go: \n";
+		while (n < world.rooms[m].doors.size())
+		{
+			cout << "To room " << world.rooms[m].doors[n] << " ?[y/n]\n";
+			cin >> choice;
+			if (choice == "y") chr.inroom = world.rooms[m].doors[n] ;
+			n++;
+		}
+	}
+}
 
 void menu_main ()
 {
@@ -59,10 +116,9 @@ void menu_main ()
 	{
 		getline(cin, choice);
 		choice = rmws(choice);
-		cout << "You entered: " << choice << endl;
 		if (choice == "1")
 		{
-			menu_character();
+			menu_navigation(menu_character());
 			isdone = true;
 		}
 		else if (choice == "2")
