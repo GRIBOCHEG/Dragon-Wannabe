@@ -55,9 +55,16 @@ struct Character
 	int inroom = 0;
 };
 
+struct Object
+{
+	string type;
+	string name;
+};
+
 struct Room
 {
 	vector<int> doors;
+	vector<Object> objects;
 };
 
 struct Level
@@ -84,12 +91,14 @@ string getmultiline (istream &i)
 Character menu_character ()
 {
 	Character cr;
+	string aged;
 	cout << "Let's settle up with your character.\n" << "Enter The name : \n";
 	getline(cin, cr.name);
 	cr.name = purify_string(cr.name);
 	cout << "Your name is: " << cr.name << endl;
 	cout << "Your age equals : \n";
-	cin >> cr.age;
+	getline(cin, aged);
+	aged = rmws(aged);
 	cout << "How will people remember you? \n";
 	cr.bio = getmultiline(cin);
 	return cr;
@@ -115,32 +124,58 @@ Level creator_level ()
 	level1.rooms[4].doors.push_back(1);
 	level1.rooms[4].doors.push_back(3);
 	level1.rooms[4].doors.push_back(0); 
+	Object obj0, obj1, obj2;
+	level1.rooms[0].objects.push_back(obj0);
+	level1.rooms[2].objects.push_back(obj1);
+	level1.rooms[3].objects.push_back(obj2);
+	level1.rooms[0].objects[0].type = "table";
+	level1.rooms[0].objects[0].name = "plain pine table";
+	level1.rooms[2].objects[0].type = "chair";
+	level1.rooms[2].objects[0].name = "pretty stone chair";
+	level1.rooms[3].objects[0].type = "rock";
+	level1.rooms[3].objects[0].name = "prdinary grey rock";
 	return level1;
 }
 
 void menu_navigation (Character chr)
 {
 	int n = 0, m = 0;
-	string choice;
+	int choice;
 	Level world = creator_level();
 	while (true)
 	{
 		n = 0;
 		m = chr.inroom;
 		cout << "You're in room " << chr.inroom << endl;
-		cout << "In this world present " << world.rooms.size() << " rooms\n";
-		cout << "In this room present " << world.rooms[m].doors.size() << " doors\n";
-		cout << "Where'd ya want to go: \n";
-		while (n < world.rooms[m].doors.size())
+		cout << "What do you want to do?\n";
+		cout << "0. Search\n";
+		cout << "1. Move\n";
+		cin >> choice;
+		if (choice == 1)
 		{
-			cout << "To room " << world.rooms[m].doors[n] << " ?[y/n]\n";
-			cin >> choice;
-			if (choice == "y")
+			cout << "Where'd ya want to go: \n";
+			n = 0;
+			while (n < world.rooms[m].doors.size())
 			{
-				chr.inroom = world.rooms[m].doors[n] ;
-				break;
-			} 
-			n++;
+				cout << n << ". To room " << world.rooms[m].doors[n] << " ?\n"; 
+				n++;
+			}
+			cin >> choice;
+			n = 0;
+			while (n < world.rooms[m].doors.size())
+			{
+				if (choice == n) chr.inroom = world.rooms[m].doors[n];
+				n++;
+			}
+		}
+		else if (choice == 0)
+		{
+			int k = 0;
+			while (k < world.rooms[m].objects.size())
+			{
+				cout << "You see a " << world.rooms[m].objects[k].type << ".\nIt is " << world.rooms[m].objects[k].name << ".\n";
+				k++;
+			}
 		}
 	}
 }
