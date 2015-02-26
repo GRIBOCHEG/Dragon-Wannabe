@@ -2,6 +2,8 @@
 #include <vector>
 #include <string>
 #include <queue>
+#include <sstream>
+#include <istream>
 using namespace std;
 
 string rmws (string str)
@@ -92,13 +94,19 @@ Character menu_character ()
 {
 	Character cr;
 	string aged;
+	int agg;
 	cout << "Let's settle up with your character.\n" << "Enter The name : \n";
 	getline(cin, cr.name);
 	cr.name = purify_string(cr.name);
 	cout << "Your name is: " << cr.name << endl;
 	cout << "Your age equals : \n";
-	getline(cin, aged);
-	aged = rmws(aged);
+	while (true)
+	{
+		getline(cin, aged);
+		istringstream s (agg = aged);
+		if (s.fail()) cout << "It's not a number";
+		else break;
+	}
 	cout << "How will people remember you? \n";
 	cr.bio = getmultiline(cin);
 	return cr;
@@ -133,7 +141,7 @@ Level creator_level ()
 	level1.rooms[2].objects[0].type = "chair";
 	level1.rooms[2].objects[0].name = "pretty stone chair";
 	level1.rooms[3].objects[0].type = "rock";
-	level1.rooms[3].objects[0].name = "prdinary grey rock";
+	level1.rooms[3].objects[0].name = "ordinary grey rock";
 	return level1;
 }
 
