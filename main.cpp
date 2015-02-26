@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <queue>
+#include <sstream>
 using namespace std;
 
 string rmws (string str)
@@ -91,14 +92,29 @@ string getmultiline (istream &i)
 Character menu_character ()
 {
 	Character cr;
-	string aged;
+	string input;
 	cout << "Let's settle up with your character.\n" << "Enter The name : \n";
-	getline(cin, cr.name);
-	cr.name = purify_string(cr.name);
+	getline(cin, input);
+	cr.name = purify_string(input);
 	cout << "Your name is: " << cr.name << endl;
+	cout << "Your input was " << input << endl;
+	input = "";
 	cout << "Your age equals : \n";
-	getline(cin, aged);
-	aged = rmws(aged);
+	while (true)
+	{
+		cout << "Enter it! \n";
+		getline(cin, input);
+		input = rmws(input);
+		istringstream ss(input);
+		if (!ss.fail() && !ss.bad())
+		{
+			ss >> cr.age;
+			break;
+		}
+		else cout << "Wrong\n";
+	}
+	cout << "bitch " << cr.age << endl;
+	cout << "input was " << input << endl
 	cout << "How will people remember you? \n";
 	cr.bio = getmultiline(cin);
 	return cr;
