@@ -2,8 +2,6 @@
 #include <vector>
 #include <string>
 #include <queue>
-#include <sstream>
-#include <istream>
 using namespace std;
 
 string rmws (string str)
@@ -59,8 +57,8 @@ struct Character
 
 struct Object
 {
-	string type;
 	string name;
+	string descr;
 };
 
 struct Room
@@ -94,19 +92,13 @@ Character menu_character ()
 {
 	Character cr;
 	string aged;
-	int agg;
 	cout << "Let's settle up with your character.\n" << "Enter The name : \n";
 	getline(cin, cr.name);
 	cr.name = purify_string(cr.name);
 	cout << "Your name is: " << cr.name << endl;
 	cout << "Your age equals : \n";
-	while (true)
-	{
-		getline(cin, aged);
-		istringstream s (agg = aged);
-		if (s.fail()) cout << "It's not a number";
-		else break;
-	}
+	getline(cin, aged);
+	aged = rmws(aged);
 	cout << "How will people remember you? \n";
 	cr.bio = getmultiline(cin);
 	return cr;
@@ -136,12 +128,12 @@ Level creator_level ()
 	level1.rooms[0].objects.push_back(obj0);
 	level1.rooms[2].objects.push_back(obj1);
 	level1.rooms[3].objects.push_back(obj2);
-	level1.rooms[0].objects[0].type = "table";
-	level1.rooms[0].objects[0].name = "plain pine table";
-	level1.rooms[2].objects[0].type = "chair";
-	level1.rooms[2].objects[0].name = "pretty stone chair";
-	level1.rooms[3].objects[0].type = "rock";
-	level1.rooms[3].objects[0].name = "ordinary grey rock";
+	level1.rooms[0].objects[0].name = "table";
+	level1.rooms[0].objects[0].descr = "plain pine table";
+	level1.rooms[2].objects[0].name = "chair";
+	level1.rooms[2].objects[0].descr = "pretty stone chair";
+	level1.rooms[3].objects[0].name = "rock";
+	level1.rooms[3].objects[0].descr = "ordinary grey rock";
 	return level1;
 }
 
@@ -181,7 +173,7 @@ void menu_navigation (Character chr)
 			int k = 0;
 			while (k < world.rooms[m].objects.size())
 			{
-				cout << "You see a " << world.rooms[m].objects[k].type << ".\nIt is " << world.rooms[m].objects[k].name << ".\n";
+				cout << "You see a " << world.rooms[m].objects[k].name << ".\nIt is " << world.rooms[m].objects[k].descr << ".\n";
 				k++;
 			}
 		}
