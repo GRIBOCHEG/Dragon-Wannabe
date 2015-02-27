@@ -93,11 +93,11 @@ Character menu_character ()
 {
 	Character cr;
 	string input;
+	int in;
 	cout << "Let's settle up with your character.\n" << "Enter The name : \n";
 	getline(cin, input);
 	cr.name = purify_string(input);
 	cout << "Your name is: " << cr.name << endl;
-	cout << "Your input was " << input << endl;
 	input = "";
 	cout << "Your age equals : \n";
 	while (true)
@@ -106,15 +106,15 @@ Character menu_character ()
 		getline(cin, input);
 		input = rmws(input);
 		istringstream ss(input);
+		ss >> in;
 		if (!ss.fail() && !ss.bad())
 		{
-			ss >> cr.age;
+			cr.age = in;
 			break;
 		}
 		else cout << "Wrong\n";
 	}
-	cout << "bitch " << cr.age << endl;
-	cout << "input was " << input << endl
+	cout << "Ypur age is: " << cr.age << endl;
 	cout << "How will people remember you? \n";
 	cr.bio = getmultiline(cin);
 	return cr;
