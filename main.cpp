@@ -17,6 +17,15 @@ string rmws (string str)
 	return str;
 }
 
+string rtrim (string str)
+{
+	while (!str.empty() && str[str.length() - 1] == ' ')
+	{
+		str.pop_back();
+	}
+	return str;
+}
+
 string purify_string (string str)
 {
 	string temp = "";
@@ -35,6 +44,8 @@ string purify_string (string str)
 		}
 		n++;
 	}
+	if (!temp.empty())
+		result.push(temp);
 	temp = "";
 	while (!result.empty())
 	{
@@ -46,6 +57,13 @@ string purify_string (string str)
 			}
 	}
 	return temp;
+}
+
+bool parse_int (string str, int &n)
+{
+	istringstream ss (rtrim(str));
+	ss >> n;
+	return !ss.fail() && ss.eof();
 }
 
 struct Character
@@ -95,26 +113,26 @@ Character menu_character ()
 	string input;
 	int in;
 	cout << "Let's settle up with your character.\n" << "Enter The name : \n";
-	getline(cin, input);
-	cr.name = purify_string(input);
+	while (true)
+	{
+		cerr << "Enter it!\n";
+		getline(cin, input);
+		cr.name = purify_string(input);
+		if (!cr.name.empty()) break;
+		else cout << "Wrong\n";
+	}
 	cout << "Your name is: " << cr.name << endl;
 	input = "";
 	cout << "Your age equals : \n";
 	while (true)
 	{
-		cout << "Enter it! \n";
+		cerr << "Enter it! \n";
 		getline(cin, input);
-		input = rmws(input);
-		istringstream ss(input);
-		ss >> in;
-		if (!ss.fail() && !ss.bad())
-		{
-			cr.age = in;
+		if (parse_int(input, cr.age))
 			break;
-		}
 		else cout << "Wrong\n";
 	}
-	cout << "Ypur age is: " << cr.age << endl;
+	cout << "Your age is: " << cr.age << endl;
 	cout << "How will people remember you? \n";
 	cr.bio = getmultiline(cin);
 	return cr;
@@ -157,6 +175,7 @@ void menu_navigation (Character chr)
 {
 	int n = 0, m = 0;
 	int choice;
+	string input;
 	Level world = creator_level();
 	while (true)
 	{
@@ -166,7 +185,13 @@ void menu_navigation (Character chr)
 		cout << "What do you want to do?\n";
 		cout << "0. Search\n";
 		cout << "1. Move\n";
-		cin >> choice;
+		while (true)
+		{
+			getline(cin, input);
+			if (parse_int(input, choice))
+				break;
+			else cout << "Wrong\n";
+		}
 		if (choice == 1)
 		{
 			cout << "Where'd ya want to go: \n";
