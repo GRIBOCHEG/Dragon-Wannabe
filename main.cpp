@@ -171,15 +171,35 @@ Level creator_level ()
 	return level1;
 }
 
+int menu_room (Room inr)
+{
+	int choice;
+	string input;
+	int n =0;
+	cout << "Where'd ya want to go: \n";
+	while (n < inr.doors.size())
+	{
+		cout << n << ". To room " << inr.doors[n] << " \n"; 
+		n++;
+	}
+	while (true)
+	{
+		getline(cin, input);
+		if (parse_int(input, choice) && choice < inr.doors.size())
+			break;
+		else cout << "Wrong\n";
+	}
+	return inr.doors[choice];
+}
+
 void menu_navigation (Character chr)
 {
-	int n = 0, m = 0;
+	int m = 0;
 	int choice;
 	string input;
 	Level world = creator_level();
 	while (true)
 	{
-		n = 0;
 		m = chr.inroom;
 		cout << "You're in room " << chr.inroom << endl;
 		cout << "What do you want to do?\n";
@@ -188,26 +208,13 @@ void menu_navigation (Character chr)
 		while (true)
 		{
 			getline(cin, input);
-			if (parse_int(input, choice))
+			if (parse_int(input, choice) && choice < 2)
 				break;
 			else cout << "Wrong\n";
 		}
 		if (choice == 1)
 		{
-			cout << "Where'd ya want to go: \n";
-			n = 0;
-			while (n < world.rooms[m].doors.size())
-			{
-				cout << n << ". To room " << world.rooms[m].doors[n] << " ?\n"; 
-				n++;
-			}
-			cin >> choice;
-			n = 0;
-			while (n < world.rooms[m].doors.size())
-			{
-				if (choice == n) chr.inroom = world.rooms[m].doors[n];
-				n++;
-			}
+			chr.inroom = menu_room(world.rooms[m]);
 		}
 		else if (choice == 0)
 		{
