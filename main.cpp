@@ -66,6 +66,33 @@ bool parse_int (string str, int &n)
 	return !ss.fail() && ss.eof();
 }
 
+void cycle_input_s (string &str)
+{
+	string input;
+	while (true)
+	{
+		cerr << "Enter it!\n";
+		getline(cin, input);
+		str = purify_string(input);
+		if (!str.empty()) 
+			break;
+		else cout << "Wrong\n";
+	}
+}
+
+void cycle_input_i (int &n)
+{
+	string input;
+	while (true)
+	{
+		cerr << "Enter it! \n";
+		getline(cin, input);
+		if (parse_int(input, n))
+			break;
+		else cout << "Wrong\n";
+	}
+}
+
 struct Character
 {
 	string name;
@@ -113,25 +140,11 @@ Character menu_character ()
 	string input;
 	int in;
 	cout << "Let's settle up with your character.\n" << "Enter The name : \n";
-	while (true)
-	{
-		cerr << "Enter it!\n";
-		getline(cin, input);
-		cr.name = purify_string(input);
-		if (!cr.name.empty()) break;
-		else cout << "Wrong\n";
-	}
+	cycle_input_s(cr.name);
 	cout << "Your name is: " << cr.name << endl;
 	input = "";
 	cout << "Your age equals : \n";
-	while (true)
-	{
-		cerr << "Enter it! \n";
-		getline(cin, input);
-		if (parse_int(input, cr.age))
-			break;
-		else cout << "Wrong\n";
-	}
+	cycle_input_i(cr.age);
 	cout << "Your age is: " << cr.age << endl;
 	cout << "How will people remember you? \n";
 	cr.bio = getmultiline(cin);
