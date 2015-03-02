@@ -66,7 +66,7 @@ bool parse_int (string str, int &n)
 	return !ss.fail() && ss.eof();
 }
 
-void cycle_input_s (string &str)
+string cycle_input_s (string str)
 {
 	string input;
 	while (true)
@@ -78,9 +78,10 @@ void cycle_input_s (string &str)
 			break;
 		else cout << "Wrong\n";
 	}
+	return str;
 }
 
-void cycle_input_i (int &n)
+int cycle_input_i (int n)
 {
 	string input;
 	while (true)
@@ -91,6 +92,33 @@ void cycle_input_i (int &n)
 			break;
 		else cout << "Wrong\n";
 	}
+	return n;
+}
+
+int cycle_input_i2 (int n, Room r)
+{
+	string input;
+	while (true)
+	{
+		getline(cin, input);
+		if (parse_int(input, n) && choice < r.doors.size())
+			break;
+		else cout << "Wrong\n";
+	}
+	return n;
+}
+
+int cycle_input_i3 (int n)
+{
+	string input;
+	while (true)
+	{
+		getline(cin, input);
+		if (parse_int(input, n) && n < 2)
+			break;
+		else cout << "Wrong\n";
+	}
+	return n;
 }
 
 struct Character
@@ -140,11 +168,11 @@ Character menu_character ()
 	string input;
 	int in;
 	cout << "Let's settle up with your character.\n" << "Enter The name : \n";
-	cycle_input_s(cr.name);
+	cr.name = cycle_input_s(cr.name);
 	cout << "Your name is: " << cr.name << endl;
 	input = "";
 	cout << "Your age equals : \n";
-	cycle_input_i(cr.age);
+	cr.age = cycle_input_i(cr.age);
 	cout << "Your age is: " << cr.age << endl;
 	cout << "How will people remember you? \n";
 	cr.bio = getmultiline(cin);
@@ -195,13 +223,7 @@ int menu_room (Room inr)
 		cout << n << ". To room " << inr.doors[n] << " \n"; 
 		n++;
 	}
-	while (true)
-	{
-		getline(cin, input);
-		if (parse_int(input, choice) && choice < inr.doors.size())
-			break;
-		else cout << "Wrong\n";
-	}
+	choice = cycle_input_i2(choice, inr);
 	return inr.doors[choice];
 }
 
@@ -218,13 +240,7 @@ void menu_navigation (Character chr)
 		cout << "What do you want to do?\n";
 		cout << "0. Search\n";
 		cout << "1. Move\n";
-		while (true)
-		{
-			getline(cin, input);
-			if (parse_int(input, choice) && choice < 2)
-				break;
-			else cout << "Wrong\n";
-		}
+		choice = cycle_input_i3(choice);
 		if (choice == 1)
 		{
 			chr.inroom = menu_room(world.rooms[m]);
