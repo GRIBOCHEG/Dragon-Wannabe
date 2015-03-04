@@ -30,18 +30,6 @@ struct Level
 	vector<Room> rooms;
 };
 
-string rmws (string str)
-{
-	int n = 0;
-	while (n < str.length())
-	{
-		if (str[n] == ' ') { 
-			str.erase(n,1); }
-		else n++;
-	}
-	return str;
-}
-
 string rtrim (string str)
 {
 	while (!str.empty() && str[str.length() - 1] == ' ')
@@ -91,6 +79,36 @@ bool parse_int (string str, int &n)
 	return !ss.fail() && ss.eof();
 }
 
+class IntParser
+{
+public:
+	virtual bool operator()(string str, int &n) = 0;
+};
+
+class SimpleIntParser : public IntParser
+{
+public:
+	virtual bool operator()(string str, int &n)
+	{
+		return parse_int(str, n);
+	}	
+};
+
+class ComparingIntParser : public IntParser
+{
+public:
+	ComparingIntParser(int num)
+	{
+		this->num = num;
+	}
+	virtual bool operator()(string str, int &n)
+	{
+		return parse_int(str, n) && n < this->num;
+	}
+private:
+	int num;
+};
+
 string cycle_input_s (string str)
 {
 	string input;
@@ -106,44 +124,18 @@ string cycle_input_s (string str)
 	return str;
 }
 
-int cycle_input_i (int n)
+int cycle_input_i (IntParser &p)
 {
 	string input;
+	int n;
 	while (true)
 	{
 		cerr << "Enter it! \n";
 		getline(cin, input);
-		if (parse_int(input, n))
-			break;
+		if (p(input, n))
+			return n;
 		else cout << "Wrong\n";
 	}
-	return n;
-}
-
-int cycle_input_i2 (int n, Room r)
-{
-	string input;
-	while (true)
-	{
-		getline(cin, input);
-		if (parse_int(input, n) && n < r.doors.size())
-			break;
-		else cout << "Wrong\n";
-	}
-	return n;
-}
-
-int cycle_input_i3 (int n)
-{
-	string input;
-	while (true)
-	{
-		getline(cin, input);
-		if (parse_int(input, n) && n < 2)
-			break;
-		else cout << "Wrong\n";
-	}
-	return n;
 }
 
 string getmultiline (istream &i)
@@ -153,7 +145,7 @@ string getmultiline (istream &i)
 	{
 		string line;
 		getline(i, line);
-		if (rmws(line).empty())
+		if (rtrim(line).empty())
 		{
 			if (!accumulator.empty())
 				return accumulator;
@@ -172,7 +164,10 @@ Character menu_character ()
 	cout << "Your name is: " << cr.name << endl;
 	input = "";
 	cout << "Your age equals : \n";
-	cr.age = cycle_input_i(cr.age);
+	{
+		SimpleIntParser sp;
+		cr.age = cycle_input_i(sp);
+	}
 	cout << "Your age is: " << cr.age << endl;
 	cout << "How will people remember you? \n";
 	cr.bio = getmultiline(cin);
@@ -223,7 +218,10 @@ int menu_room (Room inr)
 		cout << n << ". To room " << inr.doors[n] << " \n"; 
 		n++;
 	}
-	choice = cycle_input_i2(choice, inr);
+	{
+		ComparingIntParser cp(inr.doors.size());
+		choice = cycle_input_i(cp);
+	}
 	return inr.doors[choice];
 }
 
@@ -240,7 +238,10 @@ void menu_navigation (Character chr)
 		cout << "What do you want to do?\n";
 		cout << "0. Search\n";
 		cout << "1. Move\n";
-		choice = cycle_input_i3(choice);
+		{
+			ComparingIntParser cp(2);
+			choice = cycle_input_i(cp);
+		}
 		if (choice == 1)
 		{
 			chr.inroom = menu_room(world.rooms[m]);
@@ -259,23 +260,23 @@ void menu_navigation (Character chr)
 
 void menu_main ()
 {
-	string choice;
+	int choice;
 	cout << "Main menu.\n" << "1. Start game\n" << "2. Exit\n";
-	bool isdone = false;
-	while ( ! isdone)
+	while (true)
 	{
-		getline(cin, choice);
-		choice = rmws(choice);
-		if (choice == "1")
+		{
+			ComparingIntParser cp(2);
+			choice = cycle_input_i(cp);
+		}
+		if (choice == 0)
 		{
 			menu_navigation(menu_character());
-			isdone = true;
+			break;
 		}
-		else if (choice == "2")
+		else if (choice == 1)
 		{
-			isdone = true;
+			break;
 		}
-		else cout << "Wrong.\n";
 	}
 }
 
