@@ -212,43 +212,48 @@ Level creator_level ()
 	return level1;
 }
 
-int menu_room (const Room &inr)
+struct MenuNavigationState
+{
+	Room *room;
+	int *inroom;
+};
+
+void menu_room (MenuNavigationState mnavs)
 {
 	int choice;
 	string input;
 	int n =0;
 	cout << "Where'd ya want to go: \n";
-	while (n < inr.doors.size())
+	while (n < mnavs.room->doors.size())
 	{
-		cout << n << ". To room " << inr.doors[n] << " \n"; 
+		cout << n << ". To room " << mnavs.room->doors[n] << " \n";
 		n++;
 	}
 	{
-		ComparingIntParser cp(inr.doors.size());
+		ComparingIntParser cp(mnavs.room->doors.size());
 		choice = cycle_input(cp);
 	}
-	return inr.doors[choice];
+	*mnavs.inroom = mnavs.room->doors[choice];
 }
 
-void menu_search (const Room &inr)
+void menu_search (MenuNavigationState mnavs)
 {
-	int k = 0;
-	while (k < inr.objects.size())
+	int n = 0;
+	while (n < mnavs.room->objects.size())
 	{
-		cout << "You see a " << inr.objects[k].name << ".\nIt is " << inr.objects[k].descr << ".\n";
-		k++;
+		cout << "You see a " << mnavs.room->objects[n].name << ".\nIt is " << mnavs.room->objects[n].descr << ".\n";
+		n++;
 	}
 }
+
 
 void menu_navigation (Character chr)
 {
-	int m = 0;
 	int choice;
 	string input;
 	Level world = creator_level();
 	while (true)
 	{
-		m = chr.inroom;
 		cout << "You're in room " << chr.inroom << endl;
 		cout << "What do you want to do?\n";
 		cout << "0. Search\n";
@@ -257,13 +262,14 @@ void menu_navigation (Character chr)
 			ComparingIntParser cp(2);
 			choice = cycle_input(cp);
 		}
+		MenuNavigationState mnavs = { room : &world.rooms[chr.inroom], inroom : &chr.inroom };
 		if (choice == 1)
 		{
-			chr.inroom = menu_room(world.rooms[m]);
+			menu_room(mnavs);
 		}
 		else if (choice == 0)
 		{
-			menu_search(world.rooms[m]);
+			menu_search(mnavs);
 		}
 	}
 }
