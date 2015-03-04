@@ -5,6 +5,31 @@
 #include <sstream>
 using namespace std;
 
+struct Character
+{
+	string name;
+	int age;
+	string bio;
+	int inroom = 0;
+};
+
+struct Object
+{
+	string name;
+	string descr;
+};
+
+struct Room
+{
+	vector<int> doors;
+	vector<Object> objects;
+};
+
+struct Level
+{
+	vector<Room> rooms;
+};
+
 string rmws (string str)
 {
 	int n = 0;
@@ -101,7 +126,7 @@ int cycle_input_i2 (int n, Room r)
 	while (true)
 	{
 		getline(cin, input);
-		if (parse_int(input, n) && choice < r.doors.size())
+		if (parse_int(input, n) && n < r.doors.size())
 			break;
 		else cout << "Wrong\n";
 	}
@@ -120,31 +145,6 @@ int cycle_input_i3 (int n)
 	}
 	return n;
 }
-
-struct Character
-{
-	string name;
-	int age;
-	string bio;
-	int inroom = 0;
-};
-
-struct Object
-{
-	string name;
-	string descr;
-};
-
-struct Room
-{
-	vector<int> doors;
-	vector<Object> objects;
-};
-
-struct Level
-{
-	vector<Room> rooms;
-};
 
 string getmultiline (istream &i)
 {
