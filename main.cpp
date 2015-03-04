@@ -164,14 +164,14 @@ Character menu_character ()
 	cout << "Let's settle up with your character.\n" << "Enter The name : \n";
 	{
 		NoneEmptyStringParser nesp;
-		cr.name = cycle_input<string>(nesp);
+		cr.name = cycle_input(nesp);
 	}
 	cout << "Your name is: " << cr.name << endl;
 	input = "";
 	cout << "Your age equals : \n";
 	{
 		SimpleIntParser sp;
-		cr.age = cycle_input<int>(sp);
+		cr.age = cycle_input(sp);
 	}
 	cout << "Your age is: " << cr.age << endl;
 	cout << "How will people remember you? \n";
@@ -212,7 +212,7 @@ Level creator_level ()
 	return level1;
 }
 
-int menu_room (Room inr)
+int menu_room (const Room &inr)
 {
 	int choice;
 	string input;
@@ -225,9 +225,19 @@ int menu_room (Room inr)
 	}
 	{
 		ComparingIntParser cp(inr.doors.size());
-		choice = cycle_input<int>(cp);
+		choice = cycle_input(cp);
 	}
 	return inr.doors[choice];
+}
+
+void menu_search (const Room &inr)
+{
+	int k = 0;
+	while (k < inr.objects.size())
+	{
+		cout << "You see a " << inr.objects[k].name << ".\nIt is " << inr.objects[k].descr << ".\n";
+		k++;
+	}
 }
 
 void menu_navigation (Character chr)
@@ -245,7 +255,7 @@ void menu_navigation (Character chr)
 		cout << "1. Move\n";
 		{
 			ComparingIntParser cp(2);
-			choice = cycle_input<int>(cp);
+			choice = cycle_input(cp);
 		}
 		if (choice == 1)
 		{
@@ -253,12 +263,7 @@ void menu_navigation (Character chr)
 		}
 		else if (choice == 0)
 		{
-			int k = 0;
-			while (k < world.rooms[m].objects.size())
-			{
-				cout << "You see a " << world.rooms[m].objects[k].name << ".\nIt is " << world.rooms[m].objects[k].descr << ".\n";
-				k++;
-			}
+			menu_search(world.rooms[m]);
 		}
 	}
 }
@@ -266,12 +271,12 @@ void menu_navigation (Character chr)
 void menu_main ()
 {
 	int choice;
-	cout << "Main menu.\n" << "1. Start game\n" << "2. Exit\n";
+	cout << "Main menu.\n" << "0. Start game\n" << "1. Exit\n";
 	while (true)
 	{
 		{
 			ComparingIntParser cp(2);
-			choice = cycle_input<int>(cp);
+			choice = cycle_input(cp);
 		}
 		if (choice == 0)
 		{
