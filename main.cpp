@@ -79,13 +79,14 @@ bool parse_int (string str, int &n)
 	return !ss.fail() && ss.eof();
 }
 
-class IntParser
+template <typename T>
+class Parser
 {
 public:
-	virtual bool operator()(string str, int &n) = 0;
+	virtual bool operator()(string str, T &n) = 0;
 };
 
-class SimpleIntParser : public IntParser
+class SimpleIntParser : public Parser<int>
 {
 public:
 	virtual bool operator()(string str, int &n)
@@ -94,7 +95,7 @@ public:
 	}	
 };
 
-class ComparingIntParser : public IntParser
+class ComparingIntParser : public Parser<int>
 {
 public:
 	ComparingIntParser(int num)
@@ -109,31 +110,32 @@ private:
 	int num;
 };
 
-string cycle_input_s (string str)
+bool parse_nonempty_string(string str, string &resstr)
 {
+	resstr = purify_string(str);
+	return !resstr.empty();
+}
+
+class NoneEmptyStringParser : public Parser<string>
+{
+public:
+	virtual bool operator()(string str, string &resstr)	
+	{
+		return parse_nonempty_string(str, resstr);
+	}
+};
+
+template<typename T>
+T cycle_input (Parser<T> &p)
+{
+	T result;
 	string input;
 	while (true)
 	{
 		cerr << "Enter it!\n";
 		getline(cin, input);
-		str = purify_string(input);
-		if (!str.empty()) 
-			break;
-		else cout << "Wrong\n";
-	}
-	return str;
-}
-
-int cycle_input_i (IntParser &p)
-{
-	string input;
-	int n;
-	while (true)
-	{
-		cerr << "Enter it! \n";
-		getline(cin, input);
-		if (p(input, n))
-			return n;
+		if (p(input,result)) 
+			return result;
 		else cout << "Wrong\n";
 	}
 }
@@ -160,13 +162,16 @@ Character menu_character ()
 	string input;
 	int in;
 	cout << "Let's settle up with your character.\n" << "Enter The name : \n";
-	cr.name = cycle_input_s(cr.name);
+	{
+		NoneEmptyStringParser nesp;
+		cr.name = cycle_input<string>(nesp);
+	}
 	cout << "Your name is: " << cr.name << endl;
 	input = "";
 	cout << "Your age equals : \n";
 	{
 		SimpleIntParser sp;
-		cr.age = cycle_input_i(sp);
+		cr.age = cycle_input<int>(sp);
 	}
 	cout << "Your age is: " << cr.age << endl;
 	cout << "How will people remember you? \n";
@@ -220,7 +225,7 @@ int menu_room (Room inr)
 	}
 	{
 		ComparingIntParser cp(inr.doors.size());
-		choice = cycle_input_i(cp);
+		choice = cycle_input<int>(cp);
 	}
 	return inr.doors[choice];
 }
@@ -240,7 +245,7 @@ void menu_navigation (Character chr)
 		cout << "1. Move\n";
 		{
 			ComparingIntParser cp(2);
-			choice = cycle_input_i(cp);
+			choice = cycle_input<int>(cp);
 		}
 		if (choice == 1)
 		{
@@ -266,7 +271,7 @@ void menu_main ()
 	{
 		{
 			ComparingIntParser cp(2);
-			choice = cycle_input_i(cp);
+			choice = cycle_input<int>(cp);
 		}
 		if (choice == 0)
 		{
