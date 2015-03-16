@@ -3,6 +3,7 @@
 #include <string>
 #include <queue>
 #include <sstream>
+#include <fstream>
 using namespace std;
 
 struct Character
@@ -29,6 +30,33 @@ struct Level
 {
 	vector<Room> rooms;
 };
+
+void save_char (Character cr)
+{
+	ofstream ofs("Character.txt");
+	ofs << cr.name << endl;
+	ofs << cr.age << endl;
+	ofs << cr.bio;
+}
+
+bool parse_int (string , int &);
+
+bool load_char (Character &cr)
+{
+	ifstream ifs("Character.txt");
+	if (ifs.fail())
+		return false;
+	getline(ifs, cr.name);
+	string input;
+	getline(ifs, input);
+	if(!parse_int(input, cr.age))
+		return false;
+	while (!ifs.fail() && !ifs.eof())
+	{
+		getline(ifs, input);
+		cr.bio += input += string("\n");
+	}
+}
 
 string rtrim (string str)
 {
@@ -158,6 +186,11 @@ string getmultiline (istream &i)
 
 Character menu_character ()
 {
+	{
+		Character cr;
+		if (load_char(cr))
+			return cr;
+	}
 	Character cr;
 	string input;
 	int in;
@@ -176,6 +209,7 @@ Character menu_character ()
 	cout << "Your age is: " << cr.age << endl;
 	cout << "How will people remember you? \n";
 	cr.bio = getmultiline(cin);
+	save_char(cr);
 	return cr;
 }
 
