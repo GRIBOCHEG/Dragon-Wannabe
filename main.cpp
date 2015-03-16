@@ -58,6 +58,29 @@ bool load_char (Character &cr)
 	}
 }
 
+void save_inroom (int inroom)
+{
+	ofstream ofs("Location.txt");
+	ofs << inroom;
+}
+
+void load_inroom (Character &cr)
+{
+	ifstream ifs("Location.txt");
+	if (ifs.fail())
+	{
+		cr.inroom = 0;
+		return;
+	}
+	string input;
+	getline(ifs, input);
+	if(!parse_int(input, cr.inroom))
+	{
+		cr.inroom = 0;
+		return;
+	}
+}
+
 string rtrim (string str)
 {
 	while (!str.empty() && str[str.length() - 1] == ' ')
@@ -189,7 +212,10 @@ Character menu_character ()
 	{
 		Character cr;
 		if (load_char(cr))
+		{
+			load_inroom(cr);
 			return cr;
+		}
 	}
 	Character cr;
 	string input;
@@ -276,6 +302,7 @@ void menu_moveto (MenuNavigationState mnavs)
 		choice = cycle_input(cp);
 	}
 	*mnavs.inroom = mnavs.room->doors[choice];
+	save_inroom(*mnavs.inroom);
 }
 
 void menu_search (MenuNavigationState mnavs)
