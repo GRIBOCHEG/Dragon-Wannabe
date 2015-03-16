@@ -218,7 +218,15 @@ struct MenuNavigationState
 	int *inroom;
 };
 
-void menu_room (MenuNavigationState mnavs)
+typedef void (*MenuNavigationFunc)(MenuNavigationState);
+
+struct MenuNavigationOption
+{
+	string name;
+	MenuNavigationFunc func;
+};
+
+void menu_moveto (MenuNavigationState mnavs)
 {
 	int choice;
 	string input;
@@ -246,31 +254,30 @@ void menu_search (MenuNavigationState mnavs)
 	}
 }
 
-
 void menu_navigation (Character chr)
 {
 	int choice;
 	string input;
+	vector<MenuNavigationOption> optns =
+		{
+			{ name : "Search", func : menu_search },
+			{ name : "Move", func : menu_moveto }
+		};
 	Level world = creator_level();
 	while (true)
 	{
 		cout << "You're in room " << chr.inroom << endl;
 		cout << "What do you want to do?\n";
-		cout << "0. Search\n";
-		cout << "1. Move\n";
+		for (int i = 0; i < optns.size(); i++)
 		{
-			ComparingIntParser cp(2);
+			cout << i << ". " << optns[i].name << endl;
+		}
+		{
+			ComparingIntParser cp(optns.size());
 			choice = cycle_input(cp);
 		}
 		MenuNavigationState mnavs = { room : &world.rooms[chr.inroom], inroom : &chr.inroom };
-		if (choice == 1)
-		{
-			menu_room(mnavs);
-		}
-		else if (choice == 0)
-		{
-			menu_search(mnavs);
-		}
+		optns[choice].func(mnavs);
 	}
 }
 
